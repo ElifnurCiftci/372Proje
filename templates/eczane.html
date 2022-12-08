@@ -1,0 +1,29 @@
+{% extends "layout.html" %}
+{% block title %} Eczaneler {%endblock title%}
+
+{% block content %}
+<h1>Eczaneler</h1>
+<table class="table">
+    <thead class="thead-dark">
+      <tr>
+        <th scope="col">Eczane Adı</th>
+        <th scope="col">Eczane ID</th>
+        <th scope="col">Eczane Adres</th>
+        <th scope="col">Eczane Tel No</th>
+        <th scope="col">Eczane E-posta</th>
+      </tr>
+    </thead>
+    <tbody>
+        {% for eczane in eczane %}
+        <tr>
+            <td><a href=" {{ url_for('eczane.eczane_detail_page', eczane_id= eczane['eczane_id'] ) }}"> {{ eczane['eczane_ad'] }} </a></td>
+            <td>{{ eczane['eczane_id'] }}</td>
+            <td>{{ eczane['eczane_adres'] }}</td>
+            <td>{{ eczane['eczane_tel_no'] }}</td>
+            <td>{{ eczane['eczane_e_posta'] }}</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+  </table>
+
+{% endblock content %}

@@ -1,0 +1,12 @@
+{% extends "layout.html" %}
+{% block content %}
+<div class="log-form">
+    <h2>Login to your account</h2>
+    <form method="POST">
+      <input type="text" title="userid" placeholder="userid" id="userid" name="userid"/>
+      <input type="password" title="psw" placeholder="password" id="psw" name="psw" />
+      <button type="submit" class="btn" name="login">Login</button>
+      <a class="forgot" href="#">Forgot Username?</a>
+    </form>
+  </div><!--end log form -->
+  {% endblock content %}

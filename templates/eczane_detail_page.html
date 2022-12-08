@@ -1,0 +1,24 @@
+{% extends "layout.html" %}
+{% block title %} {{ eczane_ad['eczane_ad'] }} Eczanesi {%endblock title%}
+{% block content %}
+
+
+<h1>{{ eczane_ad['eczane_ad'] }} Eczanesindeki İlaçlar </h1>
+<table class="table">
+    <thead class="thead-dark">
+      <tr>
+        <th scope="col">İlac Adı</th>
+        <th scope="col">İlac id</th>
+      </tr>
+    </thead>
+    <tbody>
+        {% for ilac in ilac %}
+        <tr>
+            <td>{{ ilac['ilac_adi'] }}</td>
+            <td>{{ ilac['ilac_id'] }}</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+  </table>
+
+{% endblock content %}
