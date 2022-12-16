@@ -1,12 +1,15 @@
 import os
 from db_init import initialize
-
-from flask import Flask, session,redirect, url_for, render_template, request, Blueprint
-
+from werkzeug.security import generate_password_hash, check_password_hash
+from flask import Flask, session,redirect, url_for, render_template, request, Blueprint, flash
+import psycopg2
+import psycopg2.extras
 from psycopg2 import extensions
 from queries import *
 from generalFuncs import *
 from views.eczane import eczane
+import re
+import random
 
 
 extensions.register_type(extensions.UNICODE)
@@ -23,40 +26,114 @@ if(not HEROKU):
     os.environ['DATABASE_URL'] = "dbname='proje_yeni' user='postgres' host='localhost' password='2108'"
     initialize(os.environ.get('DATABASE_URL'))
 
+DB_HOST = "localhost"
+DB_NAME = "proje_yeni"
+DB_USER = "postgres"
+DB_PASS = "2108"
+ 
+conn = psycopg2.connect(dbname=DB_NAME, user=DB_USER, password=DB_PASS, host=DB_HOST)
+
 @app.route("/")
-def index():
-    userid=""
-    if session.__contains__('userid'):
-        userid = ""+session['userid']
-        userrole, username = whatRole(userid)
-        return userrole + ' olarak giriş yapıldı.<br>' +"Hoşgeldin "+ username + '!<br>'+ "<b><a href = '/eczane'>Eczaneleri Listele</a></b><br><b><a href = '/logout'>Çıkış yapmak içi tıkla</a></b>" 
-    return render_template("home_page.html")
+def home():
+    username = session['username'] if session.__contains__('username') else ""
+    role = session['role']
+    #return session['role'] + ' olarak giriş yapıldı.<br>' +"Hoşgeldin "+ username + '!<br>'+ "<b><a href = '/eczane'>Eczaneleri Listele</a></b><br><b><a href = '/logout'>Çıkış yapmak içi tıkla</a></b>" 
+    return render_template("home_page.html", role=role, username=username)
 
 @app.route("/login", methods = ['GET', 'POST'])
 def login():
-    if request.method == 'POST':
-        if "login" in request.form:
-            kullanıcı = select("kullanıcı_id","kullanici",asDict=True)
-            for kullanıcı in kullanıcı:
-                if(kullanıcı['kullanıcı_id']==request.form.get('userid')):
-                    userid = kullanıcı['kullanıcı_id']
-                    session['userid'] = userid 
-                    userrole, username = whatRole(userid)
-                    sifre=""
-                    if(userrole=="uye"):
-                        uye = select("uye_sifre", "uye","kullanıcı_id='{}'".format(userid),asDict=True)
-                        sifre = uye['uye_sifre']
-                    if(userrole=="admin"):
-                        admin = select("admin_sifre", "admin","kullanıcı_id='{}'".format(userid),asDict=True)
-                        sifre = admin['admin_sifre']
-                    if(sifre==request.form.get('psw') or userrole=="ziyaretci"):
-                        return redirect(url_for('index'))
-    return render_template("login_page.html")
+    cursor = conn.cursor(cursor_factory=psycopg2.extras.DictCursor)
+   
+    # Check if "username" and "password" POST requests exist (user submitted form)
+    if request.method == 'POST' and 'username' in request.form:
+        username = request.form['username']
+        print(username)
+        if(username.lower() == "ziyaretci" or username.lower() == "ziyaretçi"):
+            session['loggedin'] = True
+            session['role'] = "Ziyaretçi"
+            return redirect(url_for('home'))
+        elif 'password' in request.form:
+            password = request.form['password']
+            sifre_holder="uye_sifre"
+            isim_holder="uye_ad"
+            # Check if account exists using MySQL
+            cursor.execute('SELECT * FROM uye WHERE uye_ad = %s', (username,))
+            
+            # Fetch one record and return result
+            account = cursor.fetchone()
+            if not account:
+                cursor.execute('SELECT * FROM admin WHERE admin_ad = %s', (username,))
+                account = cursor.fetchone()
+                sifre_holder="admin_sifre"
+                isim_holder="admin_ad"
+    
+            if account:
+                password_rs = account[sifre_holder]
+                print(password_rs)
+                # If account exists in users table in out database
+                if (password_rs == password):
+                    # Create session data, we can access this data in other routes
+                    session['loggedin'] = True
+                    session['id'] = account['kullanıcı_id']
+                    session['role'] = whatRole(username)
+                    session['username'] = account[isim_holder]
+                    # Redirect to home page
+                    return redirect(url_for('home'))
+                else:
+                    # Account doesnt exist or username/password incorrect
+                    flash('Incorrect username/password')
+            else:
+                # Account doesnt exist or username/password incorrect
+                flash('Incorrect username/password')
+ 
+    return render_template('login_page.html')
+
+@app.route('/register', methods=['GET', 'POST'])
+def register():
+    cursor = conn.cursor(cursor_factory=psycopg2.extras.DictCursor)
+ 
+    # Check if "username", "password" and "email" POST requests exist (user submitted form)
+    if request.method == 'POST' and 'username' in request.form and 'password' in request.form and 'email' in request.form:
+        # Create variables for easy access
+        fullname = request.form['fullname']
+        username = request.form['username']
+        password = request.form['password']
+        email = request.form['email']
+    
+        _hashed_password = generate_password_hash(password)
+ 
+        #Check if account exists using MySQL
+        cursor.execute('SELECT * FROM uye WHERE uye_ad = %s', (username))
+        account = cursor.fetchone()
+        print(account)
+        # If account exists show error and validation checks
+        if account:
+            flash('Account already exists!')
+        elif not re.match(r'[^@]+@[^@]+\.[^@]+', email):
+            flash('Invalid email address!')
+        elif not re.match(r'[A-Za-z0-9]+', username):
+            flash('Username must contain only characters and numbers!')
+        elif not username or not password or not email:
+            flash('Please fill out the form!')
+        else:
+            # Account doesnt exists and the form data is valid, now insert new account into users table
+            id = str(random.randint(10000,99999));
+            cursor.execute("INSERT INTO uye (uye_ad, uye_sifre, kullanıcı_id) VALUES (%s,%s,%s)", (username, _hashed_password, id))
+            conn.commit()
+            flash('You have successfully registered!')
+    elif request.method == 'POST':
+        # Form is empty... (no POST data)
+        flash('Please fill out the form!')
+    # Show registration form with message (if any)
+    return render_template('register.html')
 
 @app.route('/logout')
 def logout():
    # remove the userid from the session if it is there
-   session.pop('userid', None)
+   session.pop('username', None)
+   session.pop('id', None)
+   session.pop('role', None)
+   session.pop('loggedin', None)
    return redirect(url_for('login'))
 
 if __name__ == "__main__":
