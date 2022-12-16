@@ -93,32 +93,27 @@ def register():
     cursor = conn.cursor(cursor_factory=psycopg2.extras.DictCursor)
  
     # Check if "username", "password" and "email" POST requests exist (user submitted form)
-    if request.method == 'POST' and 'username' in request.form and 'password' in request.form and 'email' in request.form:
+    if request.method == 'POST' and 'username' in request.form and 'password' in request.form:
         # Create variables for easy access
-        fullname = request.form['fullname']
-        username = request.form['username']
-        password = request.form['password']
-        email = request.form['email']
+        username = request.form['username'].strip()
+        password = request.form['password'].strip()
     
-        _hashed_password = generate_password_hash(password)
- 
         #Check if account exists using MySQL
-        cursor.execute('SELECT * FROM uye WHERE uye_ad = %s', (username))
+        cursor.execute('SELECT * FROM uye WHERE uye_ad = %s', (username,))
         account = cursor.fetchone()
         print(account)
         # If account exists show error and validation checks
         if account:
             flash('Account already exists!')
-        elif not re.match(r'[^@]+@[^@]+\.[^@]+', email):
-            flash('Invalid email address!')
         elif not re.match(r'[A-Za-z0-9]+', username):
             flash('Username must contain only characters and numbers!')
-        elif not username or not password or not email:
+        elif not username or not password:
             flash('Please fill out the form!')
         else:
             # Account doesnt exists and the form data is valid, now insert new account into users table
             id = str(random.randint(10000,99999));
-            cursor.execute("INSERT INTO uye (uye_ad, uye_sifre, kullanıcı_id) VALUES (%s,%s,%s)", (username, _hashed_password, id))
+            cursor.execute("INSERT INTO kullanici (kullanıcı_id) VALUES (%s)", (id,))
+            cursor.execute("INSERT INTO uye (uye_ad, uye_sifre, kullanıcı_id) VALUES (%s,%s,%s)", (username, password, id))
             conn.commit()
             flash('You have successfully registered!')
     elif request.method == 'POST':
