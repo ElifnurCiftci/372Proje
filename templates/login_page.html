@@ -1,12 +1,41 @@
-{% extends "layout.html" %}
-{% block content %}
-<div class="log-form">
-    <h2>Login to your account</h2>
-    <form method="POST">
-      <input type="text" title="userid" placeholder="userid" id="userid" name="userid"/>
-      <input type="password" title="psw" placeholder="password" id="psw" name="psw" />
-      <button type="submit" class="btn" name="login">Login</button>
-      <a class="forgot" href="#">Forgot Username?</a>
+  <html>
+ <head>
+  <meta charset="utf-8">
+  <title>Giriş Yap</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+  <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.1/css/all.css">
+ <link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.1.1/css/bootstrap.min.css" rel="stylesheet" id="bootstrap-css">
+ <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.1.1/js/bootstrap.min.js"></script>
+ <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+ </head>
+ <body style="background-color:#ccc;">
+  <div class="login-box" >
+  <div class="login-header">Giriş Yap</div>
+  <div class="login-body">
+    <p>Lütfen kullanıcı ismi ve parolanızı girin.</p>
+    <p>Ziyaretçi olarak devam etmek için kullanıcı ismine ziyaretci yazmak yeterli olacaktır.</p>
+    <form class="form-group" action="{{ url_for('login') }}" method="post">
+        <label>Kullanıcı İsmi</label>
+        <input type="text" class="form-control" name="username" placeholder="Kullanıcı İsmi" id="username" required>
+        <label>Parola</label>
+        <input type="password" class="form-control" name="password" placeholder="Parola" id="password">
+        <input type="checkbox" value="checked"><b>Remember</b>
+        <input type="submit" value="Giriş Yap" class="form-control btn btn-success " name="">
     </form>
-  </div><!--end log form -->
-  {% endblock content %}
+    {% with messages = get_flashed_messages()  %}
+    {% if messages %}
+    {% for message in messages %}
+    <div class="alert alert-success alert-dismissible fade show" role="alert">
+      {{ message }}
+      <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+        <span aria-hidden="true">×</span>
+      </button>
+    </div>
+    {% endfor %}
+    {% endif %}
+    {% endwith %}
+    <p>Henüz bir hesabınız yok mu? <a href="{{ url_for('register') }}">Kaydolun!</a></p>
+  </div>
+ </div>
+ </body>
+</html>

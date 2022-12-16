@@ -35,6 +35,7 @@ INIT_STATEMENTS = [
         kullanıcı_id  char(5)  not null,
         primary key(kullanıcı_id)
     );
+
     """,
     """
     create table if not exists siparis
