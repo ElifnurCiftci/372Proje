@@ -1,0 +1,28 @@
+{% extends "layout.html" %}
+{% block title %} İlaçlar {%endblock title%}
+{% block content %}
+
+
+<h1>Tüm İlaçlar </h1>
+<table class="table">
+    <thead class="thead-dark">
+      <tr>
+        <th scope="col">İlac Adı</th>
+        <th scope="col">İlac Çeşidi</th>
+        <th scope="col">İlac ID</th>
+        <th scope="col">Son Kullanma Tarihi</th>
+      </tr>
+    </thead>
+    <tbody>
+        {% for ilac in ilac %}
+        <tr>
+            <td>{{ ilac['ilac_adi'] }}</td>
+            <td>{{ ilac['ilac_cesidi'] }}</td>
+            <td>{{ ilac['ilac_id'] }}</td>
+            <td>{{ ilac['son_kullanma_tarihi'] }}</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+  </table>
+
+{% endblock content %}
