@@ -8,6 +8,7 @@ from psycopg2 import extensions
 from queries import *
 from generalFuncs import *
 from views.eczane import eczane
+from views.ilac import ilac
 import re
 import random
 
@@ -19,6 +20,7 @@ app = Flask(__name__)
 app.secret_key='my super secret key'.encode('utf8')
 
 app.register_blueprint(eczane,url_prefix="/eczane")
+app.register_blueprint(ilac,url_prefix="/ilac")
 
 HEROKU = False
 
@@ -36,7 +38,7 @@ conn = psycopg2.connect(dbname=DB_NAME, user=DB_USER, password=DB_PASS, host=DB_
 @app.route("/")
 def home():
     username = session['username'] if session.__contains__('username') else ""
-    role = session['role']
+    role = session['role'] if session.__contains__('role') else ""
     #return session['role'] + ' olarak giriş yapıldı.<br>' +"Hoşgeldin "+ username + '!<br>'+ "<b><a href = '/eczane'>Eczaneleri Listele</a></b><br><b><a href = '/logout'>Çıkış yapmak içi tıkla</a></b>" 
     return render_template("home_page.html", role=role, username=username)
 
