@@ -112,9 +112,13 @@ INIT_STATEMENTS = [
         eczane_id  char(5) not null ,
         siparis_id  char(10)  not null ,
         primary key (eczane_id, siparis_id),
-        foreign key (eczane_id) references eczane(eczane_id),
-        foreign key (siparis_id) references siparis(siparis_id)
+        foreign key (eczane_id) references eczane(eczane_id)
     );
+
+    alter table eczane_siparis
+	    drop constraint if exists eczane_siparis_fk1;
+    alter table eczane_siparis
+	    add constraint  eczane_siparis_fk1 foreign key (siparis_id) references siparis(siparis_id) on delete cascade;
     """
 ]
 
