@@ -16,7 +16,7 @@
     <tbody>
         {% for eczane in eczane %}
         <tr>
-            <td><a href=" {{ url_for('eczane_detail_page', eczane_id= eczane['eczane_id'] ) }}"> {{ eczane['eczane_ad'] }} </a></td>
+            <td><a href=" {{ url_for('eczane_detail_page', eczane_id=eczane['eczane_id'] ) }}"> {{ eczane['eczane_ad'] }} </a></td>
             <td>{{ eczane['eczane_id'] }}</td>
             <td>{{ eczane['eczane_adres'] }}</td>
             <td>{{ eczane['eczane_tel_no'] }}</td>
