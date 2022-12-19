@@ -130,7 +130,7 @@ def logout():
 def siparis():
     cursor = conn.cursor(cursor_factory=psycopg2.extras.DictCursor)
     if request.method == 'GET':
-        if(session['role']=="admin"):
+        if session['role']=="admin":
             cursor.execute("SELECT kullanıcı_id, siparis.siparis_id,ilac_adi,ilac_id,ilac_cesidi,siparis_tarihi FROM siparis left JOIN ilac ON ilac.siparis_id=siparis.siparis_id")
         else:
             cursor.execute("SELECT siparis.siparis_id,ilac_adi,ilac_id,ilac_cesidi,siparis_tarihi FROM siparis left JOIN ilac ON ilac.siparis_id=siparis.siparis_id WHERE kullanıcı_id='"+(session['id'])+"'")
@@ -144,10 +144,11 @@ def siparis():
             siparis =re.sub('[\[\]]', '',siparis)
             siparis =re.sub(' +', '',siparis)
             siparis = siparis.split(",")
-            siparis_id = siparis[0]
-            ilac_id = siparis[3]
+            siparis_id = siparis[1] if session['role'] == "admin" else siparis[0]
+            ilac_id = siparis[4] if session['role'] == "admin" else siparis[3]
             cursor.execute("DELETE FROM siparis WHERE siparis_id="+siparis_id)
-            cursor.execute ("UPDATE ilac SET siparis_id=null WHERE ilac_id="+ilac_id)
+            if ilac_id != "none" and ilac_id != "None":
+                cursor.execute ("UPDATE ilac SET siparis_id=null WHERE ilac_id="+ilac_id)
             conn.commit()
         return redirect(url_for("siparis"))
 
