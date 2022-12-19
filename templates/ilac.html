@@ -3,7 +3,13 @@
 {% block content %}
 
 <div style ="display: inline-flex;">
-<h1 style ="display: flex;"><a href="/ilac">{{ eczane_ad }} İlaçlar </a></h1>
+<h1 style ="display: flex;">
+  {% if eczane_ad == 'Tüm' %}
+  <a href="/ilac">{{ eczane_ad }} İlaçlar </a>
+  {% else %}
+  <a href="/eczane/{{eczane_id}}">{{ eczane_ad }} İlaçlar </a>
+  {% endif %}
+</h1>
 <div style ="height: inherit; width:2rem ;"></div>
 <form class="form-inline my-2 my-lg-0" style ="display: flex;" method="post">
   <input class="form-control mr-sm-2" type="search" placeholder="İlaç Adı Ara" aria-label="Search" name="aranan" id="aranan">
