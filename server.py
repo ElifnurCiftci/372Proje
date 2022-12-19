@@ -183,15 +183,25 @@ def eczane_page():
 
 @app.route("/eczane/<eczane_id>", methods=['GET','POST'])
 def eczane_detail_page(eczane_id):
+    cursor = conn.cursor(cursor_factory=psycopg2.extras.DictCursor)
     eczane_ad = select("eczane_ad","eczane","eczane_id='{}'".format(eczane_id),asDict=True)
     if request.method == "GET":
         ilac = select("ilac_adi,ilac_id,ilac_cesidi,son_kullanma_tarihi","ilac natural join anlasma_saglar","eczane_id='{}' and siparis_id is null order by son_kullanma_tarihi desc".format(eczane_id),asDict=True)
-        return render_template("ilac.html", ilac = ilac, eczane_ad=eczane_ad['eczane_ad']+" Eczanesindeki", role=session['role'])
+        return render_template("ilac.html", ilac = ilac, eczane_ad=eczane_ad['eczane_ad']+" Eczanesindeki", role=session['role'], eczane_id=eczane_id)
     elif request.method == "POST":
-        if "ara" in request.form:
+        if "sepete_ekle" in request.form:
+            id = str(random.randint(1000000000,9999999999))
+            ilac_id = "'"+request.form.get('sepete_ekle')+"'"
+            cursor.execute("INSERT INTO siparis (siparis_id,kullanıcı_id,siparis_tarihi) VALUES (%s,%s,%s)", (id,session['id'],datetime.today().strftime('%Y-%m-%d')))
+            cursor.execute ("UPDATE ilac SET siparis_id='"+id+"' WHERE ilac_id="+ilac_id)
+            conn.commit()
+        elif "ara" in request.form:
             ilac_ad = str(request.form.get('aranan')).lower()
-            ilac = select("ilac_adi,ilac_id,ilac_cesidi,son_kullanma_tarihi","ilac natural join anlasma_saglar","eczane_id='{}'".format(eczane_id)+"and LOWER(ilac_adi)='{}' and siparis_id is null order by son_kullanma_tarihi desc".format(ilac_ad),asDict=True)
-            return render_template("ilac.html", ilac = ilac, eczane_ad=eczane_ad['eczane_ad']+" Eczanesindeki", role=session['role'])
+            cursor.execute("SELECT ilac_adi,ilac_id,ilac_cesidi,son_kullanma_tarihi FROM ilac natural join anlasma_saglar WHERE eczane_id='"+eczane_id+"' and LOWER(ilac_adi)='"+ilac_ad+"' AND siparis_id IS NULL ORDER BY son_kullanma_tarihi DESC")
+            ilac = cursor.fetchall()
+            conn.commit()
+            return render_template("ilac.html", ilac = ilac, eczane_ad=eczane_ad['eczane_ad']+" Eczanesindeki", role=session['role'],eczane_id=eczane_id)
+        return redirect(url_for('eczane_detail_page', eczane_id=eczane_id))
 if __name__ == "__main__":
     if(not HEROKU):
         app.run(debug = True)
