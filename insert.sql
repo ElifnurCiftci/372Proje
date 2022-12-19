@@ -132,3 +132,47 @@ insert into ECZANE_SIPARIS values
 ('33333','9999999999');
 insert into ECZANE_SIPARIS values
 ('22222','0000000000');
+
+INSERT INTO ilac VALUES 
+  ('1111111211',null,'sprey','Exelon','2025-05-14','f1111');
+INSERT INTO ilac VALUES 
+  ('1111111212',null,'srup','Lucentis','2024-02-13','f3333');
+INSERT INTO ilac VALUES 
+  ('1111111213',null,'tablet','Galvus','2025-08-08','f2222');
+INSERT INTO ilac VALUES 
+  ('1111111214',null,'sprey','Alamida','2024-02-14','f1111');
+INSERT INTO ilac VALUES 
+  ('1111111215',null,'srup','Lucentis','2024-07-01','f3333');
+INSERT INTO ilac VALUES 
+  ('1111111216',null,'tablet','Galvus','2024-10-03','f4444');
+INSERT INTO ilac VALUES 
+  ('1111111217',null,'sprey','Exelon','2024-10-04','f5555');
+INSERT INTO ilac VALUES 
+  ('1111111218',null,'srup','Lopresor','2025-03-20','f5555');
+INSERT INTO ilac VALUES 
+  ('1111111219',null,'tablet','Galvus','2025-11-01','f4444');
+
+INSERT INTO ilac VALUES 
+  ('1111111220',null,'sprey','Alamida','2025-05-14','f1111');
+INSERT INTO ilac VALUES 
+  ('1111111221',null,'tablet','Majezik','2024-02-13','f3333');
+INSERT INTO ilac VALUES 
+  ('1111111222',null,'tablet','Majezik','2025-08-08','f2222');
+INSERT INTO ilac VALUES 
+  ('1111111223',null,'tablet','Majezik','2024-02-14','f1111');
+INSERT INTO ilac VALUES 
+  ('1111111224',null,'srup','Afinitor','2024-07-01','f3333');
+INSERT INTO ilac VALUES 
+  ('1111111229',null,'tablet','Majezik','2024-10-23','f4444');
+INSERT INTO ilac VALUES 
+  ('1111111225',null,'tablet','Ibucold','2024-08-03','f4444');
+INSERT INTO ilac VALUES 
+  ('1111111226',null,'sprey','Alamida','2024-05-04','f5555');
+INSERT INTO ilac VALUES 
+  ('1111111227',null,'srup','Afinitor','2025-03-20','f5555');
+INSERT INTO ilac VALUES 
+  ('1111111228',null,'tablet','Majezik','2025-11-01','f4444');
+INSERT INTO ilac VALUES 
+  ('1111111230',null,'sprey','Alamida','2025-09-02','f2222');
+INSERT INTO ilac VALUES 
+  ('1111111231',null,'srup','Afinitor','2025-11-01','f2222');

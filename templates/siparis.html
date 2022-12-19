@@ -1,0 +1,51 @@
+{% extends "layout.html" %}
+{% block title %}
+{% if role == 'admin' %}
+  Tüm Siparişler
+{% else %}
+  Siparişlerim
+{% endif %}
+{%endblock title%}
+{% block content %}
+
+{% if role == 'admin' %}
+<h1>Tüm Siparişler </h1>
+{% else %}
+<h1>Siparişlerim </h1>
+{% endif %}
+<table class="table">
+    <thead class="thead-dark">
+      <tr>
+        {% if role == 'admin' %}
+        <th scope="col">Kullanıcı ID</th>
+        {% endif %}
+        <th scope="col">Siparis ID</th>
+        <th scope="col">İlac Adı</th>
+        <th scope="col">İlac Çeşidi</th>
+        <th scope="col">İlac ID</th>
+        <th scope="col">Sipariş Tarihi</th>
+        <th scope="col"></th>
+      </tr>
+    </thead>
+    <tbody>
+        {% for siparis in siparis %}
+        <tr>
+            {% if role == 'admin' %}
+            <td>{{ siparis['kullanıcı_id'] }}</td>
+            {% endif %}
+            <td>{{ siparis['siparis_id'] }}</td>
+            <td>{{ siparis['ilac_adi'] }}</td>
+            <td>{{ siparis['ilac_cesidi'] }}</td>
+            <td>{{ siparis['ilac_id'] }}</td>
+            <td>{{ siparis['siparis_tarihi'] }}</td>
+            <td>
+                <form method="post" >
+                  <button type="submit" name = "sepetten_cıkar"  value = "{{ siparis }}" class="btn btn-primary">sepetten_cıkar</button>
+                </form>
+            </td>
+        </tr>
+        {% endfor %}
+    </tbody>
+  </table>
+
+{% endblock content %}

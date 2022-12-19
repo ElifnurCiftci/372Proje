@@ -1,9 +1,15 @@
 {% extends "layout.html" %}
-{% block title %} İlaçlar {%endblock title%}
+{% block title %} {{ eczane_ad }} İlaçlar {%endblock title%}
 {% block content %}
 
-
-<h1>Tüm İlaçlar </h1>
+<div style ="display: inline-flex;">
+<h1 style ="display: flex;"><a href="/ilac">{{ eczane_ad }} İlaçlar </a></h1>
+<div style ="height: inherit; width:2rem ;"></div>
+<form class="form-inline my-2 my-lg-0" style ="display: flex;" method="post">
+  <input class="form-control mr-sm-2" type="search" placeholder="İlaç Adı Ara" aria-label="Search" name="aranan" id="aranan">
+  <button name="ara" id="ara" class="btn btn-outline-success my-2 my-sm-0" type="submit">ara</button>
+</form>
+</div>
 <table class="table">
     <thead class="thead-dark">
       <tr>
@@ -11,6 +17,9 @@
         <th scope="col">İlac Çeşidi</th>
         <th scope="col">İlac ID</th>
         <th scope="col">Son Kullanma Tarihi</th>
+        {% if role != 'ziyaretci' %}
+        <th scope="col"><a href = '/siparis'>Sepete Git</a></th>
+        {% endif %}
       </tr>
     </thead>
     <tbody>
@@ -20,6 +29,14 @@
             <td>{{ ilac['ilac_cesidi'] }}</td>
             <td>{{ ilac['ilac_id'] }}</td>
             <td>{{ ilac['son_kullanma_tarihi'] }}</td>
+            {% if role != 'ziyaretci' %}
+            <td>
+                <form method="post" >
+                  <button type="submit" name = "sepete_ekle"  value = "{{ ilac['ilac_id'] }}" class="btn btn-primary">sepete_ekle</button>
+                </form>
+              
+            </td>
+            {% endif %}
         </tr>
         {% endfor %}
     </tbody>
